@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <article class="blog-article">
+    <header class="article-header">
+      <div class="container">
+        <span class="blog-category"><%= post.category || 'Article' %></span>
+        <h1><%= post.title %></h1>
+        <div class="article-meta">
+          <span>Par <%= post.author || siteName %></span>
+          <time datetime="<%= post.created_at %>"><%= new Date(post.created_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) %></time>
+        </div>
+      </div>
+    </header>
+
+    <% if (post.image) { %>
+    <div class="article-image container">
+      <img src="<%= post.image %>" alt="<%= post.title %>">
+    </div>
+    <% } %>
+
+    <div class="article-content container">
+      <%- post.content %>
+    </div>
+  </article>
+
+  <section class="section">
+    <div class="container" style="text-align:center">
+      <a href="/blog" class="btn btn-outline">← Retour au blog</a>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/main.js" defer></script>
+</body>
+</html>

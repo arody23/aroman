@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <%- include('../partials/sidebar', { activePage: 'blog' }) %>
+  <div class="admin-main">
+    <header class="admin-topbar"><button class="admin-menu-toggle" id="admin-menu-toggle">☰</button><h1><%= title %></h1></header>
+    <div class="admin-content">
+      <form class="admin-form" method="POST" action="<%= item ? '/' + adminPath + '/blog/' + item.id : '/' + adminPath + '/blog' %>" enctype="multipart/form-data">
+        <div class="form-group"><label>Titre *</label><input type="text" name="title" value="<%= item ? item.title : '' %>" required></div>
+        <div class="form-row">
+          <div class="form-group"><label>Slug</label><input type="text" name="slug" value="<%= item ? item.slug : '' %>" placeholder="auto-généré si vide"></div>
+          <div class="form-group"><label>Catégorie</label><input type="text" name="category" value="<%= item ? item.category : '' %>"></div>
+        </div>
+        <div class="form-group"><label>Contenu (HTML)</label><textarea name="content" rows="12"><%= item ? item.content : '' %></textarea></div>
+        <div class="form-group"><label>Image</label><input type="file" name="image" accept="image/*"><% if (item && item.image) { %><input type="hidden" name="existing_image" value="<%= item.image %>"><img src="<%= item.image %>" class="preview-img"><% } %></div>
+        <div class="form-group"><label>Auteur</label><input type="text" name="author" value="<%= item ? item.author : 'Aroman EMETSHU' %>"></div>
+        <fieldset class="seo-fieldset"><legend>SEO</legend>
+          <div class="form-group"><label>Meta Title</label><input type="text" name="meta_title" value="<%= item ? item.meta_title : '' %>"></div>
+          <div class="form-group"><label>Meta Description</label><textarea name="meta_description" rows="2"><%= item ? item.meta_description : '' %></textarea></div>
+        </fieldset>
+        <div class="form-group"><label class="checkbox-label"><input type="checkbox" name="published" value="1" <%= item && item.published ? 'checked' : '' %>> Publié</label></div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="/<%= adminPath %>/blog" class="btn btn-outline">Annuler</a>
+      </form>
+    </div>
+  </div>
+  <script>document.getElementById('admin-menu-toggle')?.addEventListener('click',()=>document.getElementById('admin-sidebar').classList.toggle('open'));</script>
+</body>
+</html>

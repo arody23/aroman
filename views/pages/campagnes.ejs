@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <section class="page-hero page-hero-dark">
+    <div class="container">
+      <span class="section-tag">Campagnes</span>
+      <h1>Résultats publicitaires</h1>
+      <p class="page-hero-lead">Des campagnes optimisées, des résultats concrets. Chaque étude de cas raconte une histoire de performance.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <% if (campaigns.length === 0) { %>
+      <p class="empty-state reveal">Les campagnes seront bientôt disponibles.</p>
+      <% } else { %>
+      <div class="campaign-detail-list">
+        <% campaigns.forEach(function(c) { %>
+        <article class="campaign-detail reveal">
+          <div class="campaign-detail-header">
+            <span class="campaign-platform"><%= c.platform || 'Multi-plateforme' %></span>
+            <h2><%= c.client_name %></h2>
+            <% if (c.objective) { %><p class="campaign-objective"><%= c.objective %></p><% } %>
+          </div>
+
+          <% if (c.results) { %>
+          <div class="campaign-highlight"><%= c.results %></div>
+          <% } %>
+
+          <% if (c.statistics && Object.keys(c.statistics).length > 0) { %>
+          <div class="campaign-stats campaign-stats-large">
+            <% Object.entries(c.statistics).forEach(function([key, val]) { %>
+            <div class="campaign-stat"><span class="campaign-stat-value"><%= val %></span><span class="campaign-stat-label"><%= key %></span></div>
+            <% }); %>
+          </div>
+          <% } %>
+
+          <% if (c.strategy) { %>
+          <div class="campaign-section">
+            <h3>Stratégie</h3>
+            <p><%= c.strategy %></p>
+          </div>
+          <% } %>
+
+          <% if (c.description) { %>
+          <div class="campaign-section">
+            <h3>Détails</h3>
+            <p><%= c.description %></p>
+          </div>
+          <% } %>
+
+          <% if (c.comments) { %>
+          <blockquote class="campaign-quote">&ldquo;<%= c.comments %>&rdquo;</blockquote>
+          <% } %>
+
+          <% if (c.screenshots && c.screenshots.length > 0) { %>
+          <div class="campaign-screenshots">
+            <% c.screenshots.forEach(function(s) { %>
+            <img src="<%= s %>" alt="Capture campagne <%= c.client_name %>" loading="lazy">
+            <% }); %>
+          </div>
+          <% } %>
+        </article>
+        <% }); %>
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/main.js" defer></script>
+</body>
+</html>

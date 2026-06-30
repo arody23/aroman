@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <%- include('../partials/sidebar', { activePage: 'applications' }) %>
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Menu">☰</button>
+      <h1><%= title %></h1>
+      <a href="/<%= adminPath %>/applications/new" class="btn btn-primary btn-sm">+ Nouvelle application</a>
+    </header>
+    <div class="admin-content">
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <h2>Liste des applications</h2>
+          <span class="chart-panel-badge"><%= items.length %> entrée<%= items.length !== 1 ? 's' : '' %></span>
+        </div>
+        <table class="admin-table admin-table-full">
+          <thead>
+            <tr><th>Titre</th><th>Plateforme</th><th>Statut</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <% if (items.length === 0) { %>
+            <tr>
+              <td colspan="4" class="empty">
+                Aucune application pour le moment.<br>
+                <a href="/<%= adminPath %>/applications/new" class="admin-link" style="margin-top:12px">+ Créer la première application</a>
+              </td>
+            </tr>
+            <% } %>
+            <% items.forEach(function(item) { %>
+            <tr>
+              <td><strong><%= item.title %></strong></td>
+              <td><%= item.platform || '—' %></td>
+              <td><span class="badge <%= item.published ? 'badge-published' : 'badge-draft' %>"><%= item.published ? 'Publié' : 'Brouillon' %></span></td>
+              <td class="actions">
+                <a href="/<%= adminPath %>/applications/<%= item.id %>/edit">Modifier</a>
+                <form method="POST" action="/<%= adminPath %>/applications/<%= item.id %>/delete" onsubmit="return confirm('Supprimer cette application ?')">
+                  <button type="submit" class="btn-danger">Suppr.</button>
+                </form>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script>document.getElementById('admin-menu-toggle')?.addEventListener('click',()=>document.getElementById('admin-sidebar').classList.toggle('open'));</script>
+</body>
+</html>

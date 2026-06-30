@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <%- include('../partials/sidebar', { activePage: 'testimonials' }) %>
+  <div class="admin-main">
+    <header class="admin-topbar"><button class="admin-menu-toggle" id="admin-menu-toggle">☰</button><h1><%= title %></h1></header>
+    <div class="admin-content">
+      <form class="admin-form" method="POST" action="<%= item ? '/' + adminPath + '/testimonials/' + item.id : '/' + adminPath + '/testimonials' %>">
+        <div class="form-row">
+          <div class="form-group"><label>Nom *</label><input type="text" name="name" value="<%= item ? item.name : '' %>" required></div>
+          <div class="form-group"><label>Rôle</label><input type="text" name="role" value="<%= item ? item.role : '' %>"></div>
+        </div>
+        <div class="form-group"><label>Entreprise</label><input type="text" name="company" value="<%= item ? item.company : '' %>"></div>
+        <div class="form-group"><label>Témoignage *</label><textarea name="content" rows="4" required><%= item ? item.content : '' %></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label>Ordre</label><input type="number" name="sort_order" value="<%= item ? item.sort_order : 0 %>"></div>
+          <div class="form-group"><label class="checkbox-label"><input type="checkbox" name="published" value="1" <%= !item || item.published ? 'checked' : '' %>> Publié</label></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="/<%= adminPath %>/testimonials" class="btn btn-outline">Annuler</a>
+      </form>
+    </div>
+  </div>
+  <script>document.getElementById('admin-menu-toggle')?.addEventListener('click',()=>document.getElementById('admin-sidebar').classList.toggle('open'));</script>
+</body>
+</html>

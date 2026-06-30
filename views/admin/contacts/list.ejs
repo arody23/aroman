@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <%- include('../partials/sidebar', { activePage: 'contacts' }) %>
+  <div class="admin-main">
+    <header class="admin-topbar"><button class="admin-menu-toggle" id="admin-menu-toggle">☰</button><h1><%= title %></h1></header>
+    <div class="admin-content">
+      <table class="admin-table admin-table-full">
+        <thead><tr><th>Nom</th><th>Email</th><th>Services</th><th>Description</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% if (items.length === 0) { %><tr><td colspan="7" class="empty">Aucune demande.</td></tr><% } %>
+          <% items.forEach(function(item) {
+            let services = [];
+            try { services = JSON.parse(item.services || '[]'); } catch(e) {}
+          %>
+          <tr>
+            <td><strong><%= item.name %></strong><% if (item.company) { %><br><small><%= item.company %></small><% } %></td>
+            <td><a href="mailto:<%= item.email %>"><%= item.email %></a><% if (item.phone) { %><br><small><%= item.phone %></small><% } %></td>
+            <td><%= services.join(', ') %></td>
+            <td><%= item.description ? item.description.substring(0,80) + '…' : '—' %></td>
+            <td><%= item.created_at %></td>
+            <td>
+              <form method="POST" action="/<%= adminPath %>/contacts/<%= item.id %>/status">
+                <select name="status" onchange="this.form.submit()">
+                  <option value="new" <%= item.status==='new'?'selected':'' %>>Nouveau</option>
+                  <option value="read" <%= item.status==='read'?'selected':'' %>>Lu</option>
+                  <option value="replied" <%= item.status==='replied'?'selected':'' %>>Répondu</option>
+                  <option value="archived" <%= item.status==='archived'?'selected':'' %>>Archivé</option>
+                </select>
+              </form>
+            </td>
+            <td>
+              <form method="POST" action="/<%= adminPath %>/contacts/<%= item.id %>/delete" onsubmit="return confirm('Supprimer ?')"><button type="submit" class="btn-danger">Suppr.</button></form>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>document.getElementById('admin-menu-toggle')?.addEventListener('click',()=>document.getElementById('admin-sidebar').classList.toggle('open'));</script>
+</body>
+</html>

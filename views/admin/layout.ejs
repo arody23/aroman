@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="admin-brand">
+      <span>AE</span>
+      <small>Administration</small>
+    </div>
+    <nav>
+      <a href="/<%= adminPath %>" class="<%= title === 'Tableau de bord' ? 'active' : '' %>">Dashboard</a>
+      <a href="/<%= adminPath %>/projects" class="<%= title.includes('projet') || title.includes('Projet') ? 'active' : '' %>">Projets</a>
+      <a href="/<%= adminPath %>/applications" class="<%= title.includes('pplication') ? 'active' : '' %>">Applications</a>
+      <a href="/<%= adminPath %>/campaigns" class="<%= title.includes('ampagne') ? 'active' : '' %>">Campagnes</a>
+      <a href="/<%= adminPath %>/blog" class="<%= title === 'Blog' || title.includes('article') || title.includes('Article') ? 'active' : '' %>">Blog</a>
+      <a href="/<%= adminPath %>/testimonials" class="<%= title.includes('émoignage') ? 'active' : '' %>">Témoignages</a>
+      <a href="/<%= adminPath %>/contacts" class="<%= title.includes('Demande') ? 'active' : '' %>">Demandes</a>
+      <a href="/<%= adminPath %>/analytics" class="<%= title === 'Statistiques' ? 'active' : '' %>">Statistiques</a>
+    </nav>
+    <form action="/<%= adminPath %>/logout" method="POST" class="admin-logout">
+      <button type="submit">Déconnexion</button>
+    </form>
+  </aside>
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="admin-menu-toggle" id="admin-menu-toggle" aria-label="Menu">☰</button>
+      <h1><%= title %></h1>
+      <span class="admin-user"><%= adminUsername %></span>
+    </header>
+    <div class="admin-content">
+      <%- body %>
+    </div>
+  </div>
+</body>
+</html>

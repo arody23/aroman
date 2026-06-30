@@ -1,46 +1,85 @@
-# Portfolio Orbis Creativa
+# Aroman EMETSHU — Portfolio Premium v2.0
 
-Ce dépôt contient le site web professionnel d'Orbis Creativa, une agence de marketing digital spécialisée dans la publicité en ligne et la génération de leads.
+Plateforme professionnelle combinant portfolio développeur logiciel et Media Buyer, avec administration complète, blog dynamique et statistiques visiteurs.
 
-## Pages Principales
-- `index.html` — Page d'accueil avec présentation des services
-- `services.html` — Description détaillée des services
-- `work.html` — Portfolio et études de cas
-- `about.html` — À propos de l'agence
-- `contact.html` — Formulaire de contact
-- `forfaits.html` — Nos offres et forfaits
+## Stack technique
 
-## Structure des Assets
-- `assets/css/` — Fichiers CSS (style.css, whatsapp.css)
-- `assets/js/` — Scripts JavaScript (main.js, forfaits.js, contact.js)
-- `assets/img/` — Images et ressources médias
+- **Backend** : Node.js, Express
+- **Base de données** : SQLite (better-sqlite3)
+- **Vues** : EJS (server-side rendering pour le SEO)
+- **Frontend** : CSS premium, JavaScript vanilla
+- **Sécurité** : bcrypt, sessions sécurisées, helmet, rate limiting
 
-## Fonctionnalités Clés
-- Design responsive et moderne
-- Intégration WhatsApp Business avec bouton flottant
-- Formulaire de contact dynamique
-- Calculateur de ROAS (Return On Ad Spend)
-- Menu de navigation optimisé
-- Popups de forfaits interactifs
+## Démarrage rapide
 
-## Installation et Test Local
-1. Cloner le repository :
-   ```bash
-   git clone https://github.com/orbis1998/Porfolio.git
-   ```
+```bash
+# Installer les dépendances
+npm install
 
-2. Ouvrir avec un serveur local (recommandé pour les API) :
-   ```powershell
-   python -m http.server 8000   # Puis visiter http://localhost:8000
-   ```
+# Initialiser la base de données et l'admin
+npm run init-db
+
+# Lancer le serveur
+npm run dev
+```
+
+- **Site** : http://localhost:3000
+- **Administration** : http://localhost:3000/gestion-interne-aroman
+
+> L'URL d'administration est configurable via `ADMIN_PATH` dans `.env`. Aucun lien public ne pointe vers l'admin.
+
+## Configuration (.env)
+
+| Variable | Description |
+|----------|-------------|
+| `PORT` | Port du serveur |
+| `SESSION_SECRET` | Secret des sessions (à changer en production) |
+| `ADMIN_PATH` | URL privée de l'administration |
+| `ADMIN_USERNAME` | Identifiant admin |
+| `ADMIN_PASSWORD` | Mot de passe admin |
+| `SITE_URL` | URL canonique du site |
+| `SITE_NAME` | Nom du site |
+
+## Fonctionnalités
+
+### Site public
+- Page d'accueil premium (Hero, Présentation, Expertises, Réalisations, Campagnes, Blog, Témoignages, Contact)
+- Formulaire de demande de projet (multi-services)
+- Blog avec articles SEO
+- Réalisations, applications et campagnes dynamiques
+- SEO : JSON-LD, sitemap.xml, robots.txt, Open Graph, Twitter Cards
+
+### Administration
+- Gestion des projets web, applications, campagnes marketing
+- Blog avec champs SEO
+- Témoignages
+- Demandes de contact reçues
+- Statistiques visiteurs (IP, appareil, navigateur, source, pages vues)
+
+## Structure
+
+```
+├── server/           # Backend Express
+│   ├── app.js        # Point d'entrée
+│   ├── db.js         # Schéma SQLite
+│   ├── middleware/   # Auth, analytics, upload
+│   └── routes/       # Pages, API, admin
+├── views/            # Templates EJS
+├── public/           # Assets statiques + uploads
+├── data/             # Base SQLite
+└── legacy/           # Ancien site statique (archivé)
+```
+
+## Production
+
+1. Définir `NODE_ENV=production`
+2. Changer `SESSION_SECRET`, `ADMIN_PASSWORD`
+3. Configurer `SITE_URL` avec le domaine réel
+4. Utiliser un reverse proxy (Nginx) avec HTTPS
+5. `npm start`
 
 ## Contact
-- Email : orbiscreativaagency@gmail.com
-- WhatsApp : Disponible via le bouton sur le site
-- Site Web : [Orbis Creativa](https://orbiscreativa.com)
 
-## Prochaines Améliorations
-- Optimisation SEO avec structured data (JSON-LD)
-- Mise en place des outils d'analytics
-- Tests d'accessibilité et optimisations
-- Amélioration continue des performances
+- Email : contact@aromanemetshu.com
+- WhatsApp : +242 06 745 8011
+- Site : https://www.aromanemetshu.com

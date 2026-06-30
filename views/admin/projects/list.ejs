@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <%- include('../partials/sidebar', { activePage: 'projects' }) %>
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="admin-menu-toggle" id="admin-menu-toggle">☰</button>
+      <h1><%= title %></h1>
+      <a href="/<%= adminPath %>/projects/new" class="btn btn-primary btn-sm">+ Nouveau</a>
+    </header>
+    <div class="admin-content">
+      <table class="admin-table admin-table-full">
+        <thead><tr><th>Titre</th><th>Catégorie</th><th>Date</th><th>Statut</th><th>Actions</th></tr></thead>
+        <tbody>
+          <% if (items.length === 0) { %><tr><td colspan="5" class="empty">Aucun projet.</td></tr><% } %>
+          <% items.forEach(function(item) { %>
+          <tr>
+            <td><strong><%= item.title %></strong></td>
+            <td><%= item.category || '—' %></td>
+            <td><%= item.project_date || '—' %></td>
+            <td><span class="badge <%= item.published ? 'badge-published' : 'badge-draft' %>"><%= item.published ? 'Publié' : 'Brouillon' %></span></td>
+            <td class="actions">
+              <a href="/<%= adminPath %>/projects/<%= item.id %>/edit">Modifier</a>
+              <form method="POST" action="/<%= adminPath %>/projects/<%= item.id %>/delete" onsubmit="return confirm('Supprimer ?')"><button type="submit" class="btn-danger">Suppr.</button></form>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>document.getElementById('admin-menu-toggle')?.addEventListener('click',()=>document.getElementById('admin-sidebar').classList.toggle('open'));</script>
+</body>
+</html>

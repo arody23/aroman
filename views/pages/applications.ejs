@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <section class="page-hero">
+    <div class="container">
+      <span class="section-tag">Applications</span>
+      <h1>Applications & logiciels</h1>
+      <p class="page-hero-lead">Applications web, mobiles et logiciels métier développés sur mesure.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <% if (applications.length === 0) { %>
+      <p class="empty-state reveal">Les applications seront bientôt disponibles.</p>
+      <% } else { %>
+      <div class="app-grid">
+        <% applications.forEach(function(a) { %>
+        <article class="app-card reveal">
+          <% if (a.image) { %>
+          <div class="app-image"><img src="<%= a.image %>" alt="<%= a.title %>" loading="lazy"></div>
+          <% } %>
+          <div class="app-body">
+            <span class="app-platform"><%= a.platform || 'Web' %></span>
+            <h3><%= a.title %></h3>
+            <p><%= a.description || '' %></p>
+            <% if (a.technologies && a.technologies.length) { %>
+            <div class="tech-tags">
+              <% a.technologies.forEach(function(t) { %><span class="tech-tag"><%= t %></span><% }); %>
+            </div>
+            <% } %>
+            <% if (a.app_url) { %>
+            <a href="<%= a.app_url %>" target="_blank" rel="noopener" class="link-arrow">Accéder</a>
+            <% } %>
+          </div>
+        </article>
+        <% }); %>
+      </div>
+      <% } %>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+  <script src="/js/main.js" defer></script>
+</body>
+</html>
