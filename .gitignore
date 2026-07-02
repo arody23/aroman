@@ -1,8 +1,16 @@
-node_modules/
+# Next.js
+.next/
+out/
+
+# Env
 .env
-data/*.db
-data/*.db-*
-public/uploads/*
-!public/uploads/.gitkeep
-.DS_Store
-*.log
+.env.local
+
+# Data
+data/
+
+# Legacy
+_legacy-express/
+
+# Misc
+node_modules/
