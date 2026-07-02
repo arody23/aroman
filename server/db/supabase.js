@@ -4,6 +4,17 @@ let client = null;
 let dbApi = null;
 
 const JSON_FIELDS = ['technologies', 'screenshots', 'statistics', 'services'];
+const QUERY_TIMEOUT_MS = 8000;
+
+function withTimeout(promise, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(
+      () => reject(new Error(`Supabase timeout: ${label}`)),
+      QUERY_TIMEOUT_MS
+    ))
+  ]);
+}
 
 function normalizeRow(row) {
   if (!row) return row;
@@ -53,6 +64,10 @@ function groupByField(rows, field) {
 }
 
 async function runSelect(sql, params) {
+  return withTimeout(runSelectInner(sql, params), sql.slice(0, 60));
+}
+
+async function runSelectInner(sql, params) {
   const s = sql.replace(/\s+/g, ' ').trim();
 
   let m = s.match(/^SELECT COUNT\(\*\) as c FROM (\w+)$/i);
@@ -229,6 +244,10 @@ async function runSelect(sql, params) {
 }
 
 async function runMutation(sql, params) {
+  return withTimeout(runMutationInner(sql, params), sql.slice(0, 60));
+}
+
+async function runMutationInner(sql, params) {
   const s = sql.replace(/\s+/g, ' ').trim();
 
   let m = s.match(/^INSERT INTO admins \(username, password_hash\) VALUES \(\?, \?\)$/i);

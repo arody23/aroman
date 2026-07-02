@@ -5,9 +5,20 @@
     "api/index.js": {
       "maxDuration": 60,
       "includeFiles": "views/**"
+    },
+    "api/health.js": {
+      "maxDuration": 15
+    },
+    "api/health/env.js": {
+      "maxDuration": 10
     }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api" }
+    { "source": "/health/env", "destination": "/api/health/env" },
+    { "source": "/health", "destination": "/api/health" },
+    {
+      "source": "/((?!css/|js/|assets/|uploads/|favicon\\.ico|deploy-check\\.txt).*)",
+      "destination": "/api"
+    }
   ]
 }

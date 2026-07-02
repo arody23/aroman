@@ -24,16 +24,28 @@ module.exports = function pageRoutes(siteConfig) {
   };
 
   router.get('/', async (req, res, next) => {
+    let projects = [];
+    let campaigns = [];
+    let posts = [];
+    let testimonials = [];
     try {
       const db = getDb();
-      const [projectsRaw, campaignsRaw, posts, testimonials] = await Promise.all([
+      const queryAll = Promise.all([
         db.prepare('SELECT * FROM projects WHERE published = 1 ORDER BY sort_order, created_at DESC LIMIT 6').all(),
         db.prepare('SELECT * FROM campaigns WHERE published = 1 ORDER BY sort_order, created_at DESC LIMIT 4').all(),
         db.prepare('SELECT * FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 3').all(),
         db.prepare('SELECT * FROM testimonials WHERE published = 1 ORDER BY sort_order').all()
       ]);
-      const projects = projectsRaw.map(p => enrichItem(p, ['technologies']));
-      const campaigns = campaignsRaw.map(c => enrichItem(c, ['screenshots', 'statistics']));
+      const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Homepage DB timeout')), 8000));
+      const [projectsRaw, campaignsRaw, postsRaw, testimonialsRaw] = await Promise.race([queryAll, timeout]);
+      projects = projectsRaw.map(p => enrichItem(p, ['technologies']));
+      campaigns = campaignsRaw.map(c => enrichItem(c, ['screenshots', 'statistics']));
+      posts = postsRaw;
+      testimonials = testimonialsRaw;
+    } catch (err) {
+      console.error('Homepage DB fallback:', err.message);
+    }
+    try {
       res.render('pages/home', {
         ...seoDefaults,
         title: 'Aroman EMETSHU — Développeur Web & Media Buyer | Kinshasa, Brazzaville',

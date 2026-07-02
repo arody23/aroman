@@ -1,5 +1,5 @@
 const { UAParser } = require('ua-parser-js');
-const { getDb } = require('../db');
+const { getDb, isDbReady } = require('../db');
 const crypto = require('crypto');
 
 function getClientIp(req) {
@@ -27,6 +27,7 @@ async function trackVisitor(req, res, next) {
   res.locals.pageViewStart = Date.now();
 
   try {
+    if (!isDbReady()) return next();
     const db = getDb();
     let sessionId = req.cookies?.visitor_sid;
     if (!sessionId) {
@@ -74,7 +75,7 @@ async function trackVisitor(req, res, next) {
   }
 
   res.on('finish', () => {
-    if (!req.visitorId || res.statusCode >= 400) return;
+    if (!req.visitorId || res.statusCode >= 400 || !isDbReady()) return;
     try {
       const db = getDb();
       const duration = Math.round((Date.now() - res.locals.pageViewStart) / 1000);

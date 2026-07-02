@@ -74,6 +74,10 @@ function getDb() {
   return dbApi;
 }
 
+function isDbReady() {
+  return !!dbApi;
+}
+
 async function ensureAdmin(db) {
   const bcrypt = require('bcryptjs');
   const username = process.env.ADMIN_USERNAME || 'admin';
@@ -110,4 +114,4 @@ async function runSchema(pool) {
   }
 }
 
-module.exports = { initDb: bootstrap, getDb, runSchema, ensureAdmin, getSupabaseEnv };
+module.exports = { initDb: bootstrap, getDb, isDbReady, runSchema, ensureAdmin, getSupabaseEnv };
