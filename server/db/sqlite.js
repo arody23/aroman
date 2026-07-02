@@ -1,4 +1,3 @@
-const initSqlJs = require('sql.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -8,6 +7,10 @@ const dbPath = path.join(dataDir, 'portfolio.db');
 let _db = null;
 let _SQL = null;
 let dbApi = null;
+
+function loadSqlJs() {
+  return require('sql.js');
+}
 
 function save() {
   if (!_db) return;
@@ -172,7 +175,7 @@ function initSchema() {
 
 async function initDb() {
   if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-  _SQL = await initSqlJs();
+  _SQL = await loadSqlJs();
   if (fs.existsSync(dbPath)) {
     _db = new _SQL.Database(fs.readFileSync(dbPath));
   } else {

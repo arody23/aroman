@@ -1,4 +1,3 @@
-const { Pool } = require('pg');
 const dns = require('dns');
 
 if (process.env.VERCEL) {
@@ -7,6 +6,10 @@ if (process.env.VERCEL) {
 
 let pool = null;
 let dbApi = null;
+
+function loadPg() {
+  return require('pg').Pool;
+}
 
 const JSON_FIELDS = ['technologies', 'screenshots', 'statistics', 'services'];
 
@@ -111,7 +114,7 @@ async function initDb() {
   const connectionString = normalizeConnectionString(rawUrl);
   const isVercel = !!process.env.VERCEL;
 
-  pool = new Pool({
+  pool = new loadPg()({
     connectionString,
     ssl: { rejectUnauthorized: false },
     max: isVercel ? 1 : 5,

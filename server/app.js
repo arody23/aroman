@@ -11,7 +11,6 @@ const rateLimit = require('express-rate-limit');
 const { trackVisitor } = require('./middleware/analytics');
 const pageRoutes = require('./routes/pages');
 const apiRoutes = require('./routes/api');
-const adminRoutes = require('./routes/admin');
 const { initDb, getSupabaseEnv, isDbReady } = require('./db');
 
 const app = express();
@@ -107,13 +106,17 @@ app.use(session({
   }
 }));
 
-app.use(trackVisitor);
+if (!process.env.VERCEL) {
+  app.use(trackVisitor);
+}
 
 const contactLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 10, message: { error: 'Trop de requêtes.' } });
 app.use('/api/contact', contactLimiter);
 
 app.use('/api', apiRoutes());
-app.use(`/${ADMIN_PATH}`, adminRoutes(ADMIN_PATH));
+if (!process.env.VERCEL) {
+  app.use(`/${ADMIN_PATH}`, require('./routes/admin')(ADMIN_PATH));
+}
 app.use('/', pageRoutes({ siteUrl: SITE_URL, siteName: SITE_NAME }));
 
 app.use((_req, res) => {
