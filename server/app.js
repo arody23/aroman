@@ -12,13 +12,14 @@ const { trackVisitor } = require('./middleware/analytics');
 const pageRoutes = require('./routes/pages');
 const apiRoutes = require('./routes/api');
 const adminRoutes = require('./routes/admin');
-const { initDb, getSupabaseEnv } = require('./db');
+const { initDb, getSupabaseEnv, isDbReady } = require('./db');
 
 const app = express();
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 const ADMIN_PATH = process.env.ADMIN_PATH || 'gestion-interne-aroman';
-const SITE_URL = process.env.SITE_URL || `http://localhost:${PORT}`;
+const SITE_URL = process.env.SITE_URL
+  || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${PORT}`);
 const SITE_NAME = process.env.SITE_NAME || 'Aroman EMETSHU';
 
 app.locals.adminPath = ADMIN_PATH;
@@ -50,6 +51,20 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0 }));
+
+app.use((req, res, next) => {
+  if (!isDbReady()) void initDb().catch(err => console.error('DB init:', err.message));
+  const needsDb = req.path.startsWith(`/${ADMIN_PATH}`) || req.path.startsWith('/api');
+  if (!needsDb) return next();
+  if (isDbReady()) return next();
+  Promise.race([
+    initDb(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('DB timeout')), 8000))
+  ])
+    .then(() => next())
+    .catch(() => res.status(503).send('Base de données indisponible. Vérifiez SUPABASE_URL sur Vercel.'));
+});
+
 app.get('/favicon.ico', (_req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'assets', 'img', 'logo.png'));
 });
