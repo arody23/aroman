@@ -7,6 +7,7 @@ let dbReady = false;
 
 function shouldSkipDb(pathname) {
   return pathname === '/health'
+    || pathname === '/health/env'
     || pathname === '/favicon.ico'
     || /^\/(css|js|assets|uploads)\//.test(pathname)
     || /\.(css|js|png|jpg|jpeg|gif|webp|svg|ico|woff2?)$/i.test(pathname);

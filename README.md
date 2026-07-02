@@ -76,7 +76,7 @@ npm run dev
 
 Le domaine `aromanemetshu.com` doit pointer vers un déploiement Vercel connecté à ce dépôt GitHub.
 
-1. Importer le repo `orbis1998/moi` dans [Vercel](https://vercel.com)
+1. Importer le repo `arody23/moi` dans [Vercel](https://vercel.com)
 2. Ajouter les variables d'environnement (**pas besoin de DATABASE_URL**) :
    - `NODE_ENV=production`
    - `DATABASE_DRIVER=supabase`
@@ -84,7 +84,7 @@ Le domaine `aromanemetshu.com` doit pointer vers un déploiement Vercel connect�
    - `SUPABASE_SERVICE_ROLE_KEY` (clé secrète du dashboard Supabase)
    - `SESSION_SECRET`
    - `ADMIN_PATH`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`
-   - `SITE_URL=https://www.aromanemetshu.com`
+   - `SITE_URL=https://aromanemetshu.com`
 3. Déployer — l'app utilise l'API Supabase en HTTPS (compatible serverless)
 
 ### Serveur Node classique
@@ -99,4 +99,4 @@ Le domaine `aromanemetshu.com` doit pointer vers un déploiement Vercel connect�
 
 - Email : contact@aromanemetshu.com
 - WhatsApp : +242 06 745 8011
-- Site : https://www.aromanemetshu.com
+- Site : https://aromanemetshu.com

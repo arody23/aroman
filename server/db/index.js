@@ -1,14 +1,34 @@
 let dbApi = null;
 let initPromise = null;
 
+function getSupabaseEnv() {
+  const url = process.env.SUPABASE_URL?.trim();
+  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY)?.trim();
+  return { url, key };
+}
+
+function assertVercelSupabaseEnv() {
+  const { url, key } = getSupabaseEnv();
+  const missing = [];
+  if (!url) missing.push('SUPABASE_URL');
+  if (!key) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+  if (missing.length) {
+    throw new Error(
+      `Variables manquantes sur Vercel : ${missing.join(', ')}. ` +
+      'Ajoutez-les dans Settings → Environment Variables (Production + Preview), puis Redeploy.'
+    );
+  }
+}
+
 function pickDriver() {
   if (process.env.VERCEL) {
-    if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) return 'supabase';
-    throw new Error('Sur Vercel : configurez SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (sans DATABASE_URL)');
+    assertVercelSupabaseEnv();
+    return 'supabase';
   }
   if (process.env.DATABASE_DRIVER === 'supabase') return 'supabase';
   if (process.env.DATABASE_DRIVER === 'postgres') return 'postgres';
-  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY && !process.env.DATABASE_URL) return 'supabase';
+  const { url, key } = getSupabaseEnv();
+  if (url && key && !process.env.DATABASE_URL) return 'supabase';
   if (process.env.DATABASE_URL) return 'postgres';
   return 'sqlite';
 }
@@ -90,4 +110,4 @@ async function runSchema(pool) {
   }
 }
 
-module.exports = { initDb: bootstrap, getDb, runSchema, ensureAdmin };
+module.exports = { initDb: bootstrap, getDb, runSchema, ensureAdmin, getSupabaseEnv };

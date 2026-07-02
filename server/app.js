@@ -12,7 +12,7 @@ const { trackVisitor } = require('./middleware/analytics');
 const pageRoutes = require('./routes/pages');
 const apiRoutes = require('./routes/api');
 const adminRoutes = require('./routes/admin');
-const { initDb } = require('./db');
+const { initDb, getSupabaseEnv } = require('./db');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -52,6 +52,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0 }));
 app.get('/favicon.ico', (_req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'assets', 'img', 'logo.png'));
+});
+
+app.get('/health/env', (_req, res) => {
+  const { url, key } = getSupabaseEnv();
+  res.json({
+    ok: !!(url && key),
+    vercel: !!process.env.VERCEL,
+    SUPABASE_URL: !!url,
+    SUPABASE_SERVICE_ROLE_KEY: !!key,
+    DATABASE_URL: !!process.env.DATABASE_URL,
+    DATABASE_DRIVER: process.env.DATABASE_DRIVER || null
+  });
 });
 
 app.get('/health', async (_req, res) => {
