@@ -17,7 +17,7 @@ async function ensureApp() {
   if (!appReady) {
     appReady = (async () => {
       const serverless = require('serverless-http');
-      const app = require('../server/app');
+      const app = require('../server/app-vercel');
       handler = serverless(app);
     })();
   }
@@ -35,9 +35,15 @@ module.exports = async (req, res) => {
     });
   }
 
+  if (path === '/favicon.ico') {
+    res.statusCode = 302;
+    res.setHeader('Location', '/assets/img/logo.png');
+    return res.end();
+  }
+
   try {
     await ensureApp();
-    return handler(req, res);
+    await handler(req, res);
   } catch (err) {
     console.error('Vercel handler error:', err);
     if (!res.headersSent) {

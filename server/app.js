@@ -51,18 +51,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: process.env.NODE_ENV === 'production' ? '7d' : 0 }));
 
-app.use((req, res, next) => {
-  if (!isDbReady()) void initDb().catch(err => console.error('DB init:', err.message));
-  const needsDb = req.path.startsWith(`/${ADMIN_PATH}`) || req.path.startsWith('/api');
-  if (!needsDb) return next();
-  if (isDbReady()) return next();
-  Promise.race([
-    initDb(),
-    new Promise((_, reject) => setTimeout(() => reject(new Error('DB timeout')), 8000))
-  ])
-    .then(() => next())
-    .catch(() => res.status(503).send('Base de données indisponible. Vérifiez SUPABASE_URL sur Vercel.'));
-});
+if (!process.env.VERCEL) {
+  app.use((req, res, next) => {
+    if (!isDbReady()) void initDb().catch(err => console.error('DB init:', err.message));
+    const needsDb = req.path.startsWith(`/${ADMIN_PATH}`) || req.path.startsWith('/api');
+    if (!needsDb) return next();
+    if (isDbReady()) return next();
+    Promise.race([
+      initDb(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('DB timeout')), 8000))
+    ])
+      .then(() => next())
+      .catch(() => res.status(503).send('Base de données indisponible. Vérifiez SUPABASE_URL sur Vercel.'));
+  });
+}
 
 app.get('/favicon.ico', (_req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'assets', 'img', 'logo.png'));
