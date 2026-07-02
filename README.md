@@ -67,7 +67,7 @@ npm run dev
 ├── views/            # Templates EJS
 ├── public/           # Assets statiques + uploads
 ├── data/             # Base SQLite
-└── legacy/           # Ancien site statique (archivé)
+└── views/            # Templates EJS
 ```
 
 ## Production
@@ -76,7 +76,10 @@ npm run dev
 
 Le domaine `aromanemetshu.com` doit pointer vers un déploiement Vercel connecté à ce dépôt GitHub.
 
-1. Importer le repo `arody23/moi` dans [Vercel](https://vercel.com)
+**Important** : après chaque push, vérifiez que Vercel a bien redéployé. Le nouveau site répond sur `/health/env` (pas une page HTML statique).
+
+1. Importer le repo `arody23/moi` dans [Vercel](https://vercel.com) — Framework Preset : **Other**
+2. Ne pas définir de « Output Directory » (laisser vide)
 2. Ajouter les variables d'environnement (**pas besoin de DATABASE_URL**) :
    - `NODE_ENV=production`
    - `DATABASE_DRIVER=supabase`
