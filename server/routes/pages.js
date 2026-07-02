@@ -26,10 +26,14 @@ module.exports = function pageRoutes(siteConfig) {
   router.get('/', async (req, res, next) => {
     try {
       const db = getDb();
-      const projects = (await db.prepare('SELECT * FROM projects WHERE published = 1 ORDER BY sort_order, created_at DESC LIMIT 6').all()).map(p => enrichItem(p, ['technologies']));
-      const campaigns = (await db.prepare('SELECT * FROM campaigns WHERE published = 1 ORDER BY sort_order, created_at DESC LIMIT 4').all()).map(c => enrichItem(c, ['screenshots', 'statistics']));
-      const posts = await db.prepare('SELECT * FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 3').all();
-      const testimonials = await db.prepare('SELECT * FROM testimonials WHERE published = 1 ORDER BY sort_order').all();
+      const [projectsRaw, campaignsRaw, posts, testimonials] = await Promise.all([
+        db.prepare('SELECT * FROM projects WHERE published = 1 ORDER BY sort_order, created_at DESC LIMIT 6').all(),
+        db.prepare('SELECT * FROM campaigns WHERE published = 1 ORDER BY sort_order, created_at DESC LIMIT 4').all(),
+        db.prepare('SELECT * FROM blog_posts WHERE published = 1 ORDER BY created_at DESC LIMIT 3').all(),
+        db.prepare('SELECT * FROM testimonials WHERE published = 1 ORDER BY sort_order').all()
+      ]);
+      const projects = projectsRaw.map(p => enrichItem(p, ['technologies']));
+      const campaigns = campaignsRaw.map(c => enrichItem(c, ['screenshots', 'statistics']));
       res.render('pages/home', {
         ...seoDefaults,
         title: 'Aroman EMETSHU — Développeur Web & Media Buyer | Kinshasa, Brazzaville',

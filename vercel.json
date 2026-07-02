@@ -2,11 +2,16 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "maxDuration": 30,
+      "maxDuration": 60,
       "includeFiles": "views/**"
     }
   },
   "rewrites": [
+    { "source": "/css/(.*)", "destination": "/css/$1" },
+    { "source": "/js/(.*)", "destination": "/js/$1" },
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/uploads/(.*)", "destination": "/uploads/$1" },
+    { "source": "/favicon.ico", "destination": "/favicon.ico" },
     { "source": "/(.*)", "destination": "/api" }
   ]
 }

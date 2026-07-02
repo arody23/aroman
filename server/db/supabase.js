@@ -368,9 +368,6 @@ async function initDb() {
   }
 
   client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const { error } = await client.from('projects').select('id').limit(1);
-  if (error && error.code !== 'PGRST116' && error.code !== '42P01') throw error;
-
   dbApi = { prepare, client, driver: 'supabase' };
   console.log('  → Base de données : Supabase API');
   return dbApi;

@@ -2,9 +2,12 @@ let dbApi = null;
 let initPromise = null;
 
 function pickDriver() {
+  if (process.env.VERCEL) {
+    if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) return 'supabase';
+    throw new Error('Sur Vercel : configurez SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (sans DATABASE_URL)');
+  }
   if (process.env.DATABASE_DRIVER === 'supabase') return 'supabase';
   if (process.env.DATABASE_DRIVER === 'postgres') return 'postgres';
-  if (process.env.VERCEL && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) return 'supabase';
   if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY && !process.env.DATABASE_URL) return 'supabase';
   if (process.env.DATABASE_URL) return 'postgres';
   return 'sqlite';
@@ -15,12 +18,13 @@ async function bootstrap() {
   if (initPromise) return initPromise;
 
   initPromise = (async () => {
-    const driver = process.env.DATABASE_DRIVER || pickDriver();
+    const driver = pickDriver();
+    console.log(`  → Driver DB : ${driver}`);
 
     if (driver === 'supabase') {
       const supabase = require('./supabase');
       const db = await supabase.initDb();
-      await ensureAdmin(db);
+      if (!process.env.VERCEL) await ensureAdmin(db);
       dbApi = db;
       return dbApi;
     }
