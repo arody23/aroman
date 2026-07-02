@@ -90,15 +90,15 @@ Le domaine `aromanemetshu.com` doit pointer vers un déploiement Vercel connect�
 
 Le domaine pointe vers Vercel, mais le **projet Vercel** n'utilise pas le bon code. Vérifiez :
 
-1. **Settings → Git** : repo = `arody23/moi`, branche = `main`
+1. **Settings → Git** : repo = `arody23/aroman`, branche = `main`
 2. **Settings → General → Root Directory** : **vide** (pas `legacy`)
 3. **Settings → General → Framework Preset** : **Other**
 4. **Settings → General → Output Directory** : **vide**
 5. **Deployments** : ouvrir le dernier deploy → si **Build Failed**, lire les logs
 6. **Domains** : `aromanemetshu.com` doit être sur **ce** projet (retirer du projet orbis ou autre)
-7. Si rien ne change : **supprimer le projet Vercel** et le **réimporter** depuis `arody23/moi`
+7. Si rien ne change : **supprimer le projet Vercel** et le **réimporter** depuis `arody23/aroman`
 
-1. Importer le repo `arody23/moi` dans [Vercel](https://vercel.com) — Framework Preset : **Other**
+1. Importer le repo `arody23/aroman` dans [Vercel](https://vercel.com) — Framework Preset : **Other**
 2. Ne pas définir de « Output Directory » (laisser vide)
 2. Ajouter les variables d'environnement (**pas besoin de DATABASE_URL**) :
    - `NODE_ENV=production`
