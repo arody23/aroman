@@ -22,9 +22,17 @@ function fillLastDays(rows, days = 7) {
 }
 
 async function getTrafficCharts(db) {
-  const isPg = !!process.env.DATABASE_URL;
   let dailyViews, dailyVisitors;
-  if (isPg) {
+  if (db.driver === 'supabase') {
+    dailyViews = await db.prepare(`
+      SELECT date(viewed_at) as day, COUNT(*) as count FROM page_views
+      WHERE viewed_at >= datetime('now', '-7 days') GROUP BY 1 ORDER BY 1
+    `).all();
+    dailyVisitors = await db.prepare(`
+      SELECT date(first_visit) as day, COUNT(*) as count FROM visitors
+      WHERE first_visit >= datetime('now', '-7 days') GROUP BY 1 ORDER BY 1
+    `).all();
+  } else if (process.env.DATABASE_URL) {
     dailyViews = await db.prepare(`
       SELECT TO_CHAR(viewed_at, 'YYYY-MM-DD') as day, COUNT(*)::int as count
       FROM page_views WHERE viewed_at >= NOW() - INTERVAL '7 days'

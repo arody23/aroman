@@ -1,22 +1,31 @@
 let dbApi = null;
 let initPromise = null;
 
+function pickDriver() {
+  if (process.env.DATABASE_DRIVER === 'supabase') return 'supabase';
+  if (process.env.DATABASE_DRIVER === 'postgres') return 'postgres';
+  if (process.env.VERCEL && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) return 'supabase';
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY && !process.env.DATABASE_URL) return 'supabase';
+  if (process.env.DATABASE_URL) return 'postgres';
+  return 'sqlite';
+}
+
 async function bootstrap() {
   if (dbApi) return dbApi;
   if (initPromise) return initPromise;
 
   initPromise = (async () => {
-    const fs = require('fs');
-    const path = require('path');
-    const bcrypt = require('bcryptjs');
+    const driver = process.env.DATABASE_DRIVER || pickDriver();
 
-    if (process.env.VERCEL && !process.env.DATABASE_URL) {
-      throw new Error('DATABASE_URL manquant sur Vercel');
+    if (driver === 'supabase') {
+      const supabase = require('./supabase');
+      const db = await supabase.initDb();
+      await ensureAdmin(db);
+      dbApi = db;
+      return dbApi;
     }
 
-    const driver = process.env.DATABASE_DRIVER || (process.env.DATABASE_URL ? 'postgres' : 'sqlite');
-
-    if (driver === 'postgres' || process.env.DATABASE_URL) {
+    if (driver === 'postgres') {
       const pg = require('./postgres');
       const db = await pg.initDb();
       await ensureAdmin(db);
@@ -42,6 +51,7 @@ function getDb() {
 }
 
 async function ensureAdmin(db) {
+  const bcrypt = require('bcryptjs');
   const username = process.env.ADMIN_USERNAME || 'admin';
   const password = process.env.ADMIN_PASSWORD;
   if (!password) return;
@@ -55,6 +65,8 @@ async function ensureAdmin(db) {
 }
 
 async function runSchema(pool) {
+  const fs = require('fs');
+  const path = require('path');
   const schemaPath = path.join(__dirname, '..', '..', 'supabase', 'schema.sql');
   const sql = fs.readFileSync(schemaPath, 'utf8');
   const statements = sql

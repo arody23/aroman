@@ -77,29 +77,15 @@ npm run dev
 Le domaine `aromanemetshu.com` doit pointer vers un déploiement Vercel connecté à ce dépôt GitHub.
 
 1. Importer le repo `orbis1998/moi` dans [Vercel](https://vercel.com)
-2. Ajouter les variables d'environnement :
+2. Ajouter les variables d'environnement (**pas besoin de DATABASE_URL**) :
    - `NODE_ENV=production`
-   - `DATABASE_URL` (Supabase pooler, voir ci-dessous)
-   - `DATABASE_DRIVER=postgres`
+   - `DATABASE_DRIVER=supabase`
+   - `SUPABASE_URL` (ex: `https://xxxxx.supabase.co`)
+   - `SUPABASE_SERVICE_ROLE_KEY` (clé secrète du dashboard Supabase)
    - `SESSION_SECRET`
    - `ADMIN_PATH`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`
    - `SITE_URL=https://www.aromanemetshu.com`
-3. Déployer — `vercel.json` et `api/index.js` routent toutes les pages vers Express
-
-**`DATABASE_URL` sur Vercel** — dans Supabase → Settings → Database → Connection string :
-
-- Option A (recommandée serverless) : **Transaction pooler**, port `6543`
-- Option B (si timeout) : **Session pooler**, port `5432`
-
-Exemple transaction pooler :
-```env
-DATABASE_URL=postgresql://postgres.PROJECT_REF:MOT_DE_PASSE@aws-0-eu-west-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connect_timeout=30&sslmode=require
-```
-
-Exemple session pooler :
-```env
-DATABASE_URL=postgresql://postgres.PROJECT_REF:MOT_DE_PASSE@aws-0-eu-west-1.pooler.supabase.com:5432/postgres?connect_timeout=30&sslmode=require
-```
+3. Déployer — l'app utilise l'API Supabase en HTTPS (compatible serverless)
 
 ### Serveur Node classique
 
